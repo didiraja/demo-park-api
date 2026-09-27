@@ -26,6 +26,7 @@ import lombok.Getter;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
+import org.springframework.data.web.PageableDefault;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
@@ -119,7 +120,7 @@ public class ClienteController {
                             content = @Content(schema = @Schema(type = "integer", defaultValue = "20")),
                             description = "Representa o total de elementos por página"
                     ),
-                    @Parameter(in = ParameterIn.QUERY, name = "sort",
+                    @Parameter(in = ParameterIn.QUERY, name = "sort", hidden = true,
                             array = @ArraySchema(schema = @Schema(type = "string", defaultValue = "id,asc")),
                             description = "Representa a ordenação dos resultados. Aceita múltiplos critérios de ordenação."
                     ),
@@ -138,7 +139,7 @@ public class ClienteController {
             })
     @GetMapping
     @PreAuthorize("hasRole('ADMIN')")
-    public ResponseEntity<PageableDTO> getAll(Pageable pageable) {
+    public ResponseEntity<PageableDTO> getAll(@Parameter(hidden = true) @PageableDefault(size = 5, sort = {"nome"}) Pageable pageable) {
         Page<ClienteProjection> clientes = clienteService.buscarTodos(pageable);
         return ResponseEntity.ok(PageableMapper.toDTO(clientes));
     }
