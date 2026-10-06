@@ -63,7 +63,8 @@ public class VagaController {
     public ResponseEntity<Void> create(@RequestBody @Valid VagaCreateDTO dto) {
         Vaga vaga = VagaMapper.toVaga(dto);
         vagaService.salvar(vaga);
-        URI location = ServletUriComponentsBuilder.fromCurrentRequestUri().path("/{codigo}")
+        URI location = ServletUriComponentsBuilder
+                .fromCurrentRequestUri().path("/{codigo}")
                 .buildAndExpand(vaga.getCodigo())
                 .toUri();
 

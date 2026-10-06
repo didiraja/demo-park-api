@@ -31,7 +31,7 @@ public class ClienteVaga {
     @Column(name = "marca", nullable = false, length = 45)
     private String marca;
 
-    @Column(name = "modelo", nullable = false, length = 8)
+    @Column(name = "modelo", nullable = false, length = 45)
     private String modelo;
 
     @Column(name = "cor", nullable = false, length = 45)
@@ -49,11 +49,11 @@ public class ClienteVaga {
     @Column(name = "desconto", columnDefinition = "decimal(7,2)")
     private BigDecimal desconto;
 
-    @ManyToMany
+    @ManyToOne
     @JoinColumn(name = "id_cliente", nullable = false)
     private Cliente cliente;
 
-    @ManyToMany
+    @ManyToOne
     @JoinColumn(name = "id_vaga", nullable = false)
     private Vaga vaga;
 
