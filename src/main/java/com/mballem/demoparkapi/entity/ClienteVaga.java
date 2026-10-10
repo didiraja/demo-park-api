@@ -43,10 +43,10 @@ public class ClienteVaga {
     @Column(name = "data_saida")
     private LocalDateTime dataSaida;
 
-    @Column(name = "valor", columnDefinition = "decimal(7,2)")
+    @Column(name = "valor", columnDefinition = "decimal(10,2)")
     private BigDecimal valor;
 
-    @Column(name = "desconto", columnDefinition = "decimal(7,2)")
+    @Column(name = "desconto", columnDefinition = "decimal(10,2)")
     private BigDecimal desconto;
 
     @ManyToOne
