@@ -1,9 +1,6 @@
 package com.mballem.demoparkapi.web.exception;
 
-import com.mballem.demoparkapi.exception.CodigoUniqueViolationException;
-import com.mballem.demoparkapi.exception.EntityNotFoundException;
-import com.mballem.demoparkapi.exception.PasswordInvalidException;
-import com.mballem.demoparkapi.exception.UsernameUniqueViolationException;
+import com.mballem.demoparkapi.exception.*;
 import com.mballem.demoparkapi.service.CpfUniqueViolationException;
 import jakarta.servlet.http.HttpServletRequest;
 import lombok.RequiredArgsConstructor;
@@ -25,6 +22,36 @@ import org.springframework.web.bind.annotation.RestControllerAdvice;
 public class ApiExceptionHandler {
 
     private final MessageSource messageSource;
+
+    @ExceptionHandler(EntityNotFoundException.class)
+    public ResponseEntity<ErrorMessage> entityNotFoundException(EntityNotFoundException ex,
+                                                                HttpServletRequest request) {
+
+        Object[] params = new Object[]{ex.getRecurso(), ex.getCodigo()};
+
+        String message = messageSource.getMessage("exception.entityNotFoundException", params, request.getLocale());
+
+        return ResponseEntity
+                .status(HttpStatus.NOT_FOUND)
+                .contentType(MediaType.APPLICATION_JSON)
+                .body(new ErrorMessage(request,
+                        HttpStatus.NOT_FOUND,
+                        message));
+    }
+
+    @ExceptionHandler(CodigoUniqueViolationException.class)
+    public ResponseEntity<ErrorMessage> codigoUniqueViolationException(CodigoUniqueViolationException ex, HttpServletRequest request) {
+
+        Object[] params = new Object[]{ex.getRecurso(), ex.getCodigo()};
+
+        String message = messageSource.getMessage("exception.codigoUniqueViolationException", params, request.getLocale());
+        return ResponseEntity
+                .status(HttpStatus.CONFLICT)
+                .contentType(MediaType.APPLICATION_JSON)
+                .body(new ErrorMessage(request,
+                        HttpStatus.CONFLICT,
+                        message));
+    }
 
     @ExceptionHandler(AccessDeniedException.class)
     public ResponseEntity<ErrorMessage> accessDeniedException(AccessDeniedException ex,
@@ -52,8 +79,8 @@ public class ApiExceptionHandler {
                         ex.getMessage()));
     }
 
-    @ExceptionHandler(EntityNotFoundException.class)
-    public ResponseEntity<ErrorMessage> entityNotFoundException(RuntimeException ex,
+    @ExceptionHandler(VagaDisponivelException.class)
+    public ResponseEntity<ErrorMessage> vagaDisponivelException(RuntimeException ex,
                                                                         HttpServletRequest request) {
 
         log.error("Api Error - ", ex);
@@ -65,7 +92,7 @@ public class ApiExceptionHandler {
                         ex.getMessage()));
     }
 
-    @ExceptionHandler({UsernameUniqueViolationException.class, CpfUniqueViolationException.class, CodigoUniqueViolationException.class})
+    @ExceptionHandler({UsernameUniqueViolationException.class, CpfUniqueViolationException.class})
     public ResponseEntity<ErrorMessage> uniqueViolationException(RuntimeException ex, HttpServletRequest request) {
 
         log.error("Api Error - ", ex);
