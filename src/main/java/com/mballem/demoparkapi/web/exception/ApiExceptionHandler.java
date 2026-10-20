@@ -23,13 +23,13 @@ public class ApiExceptionHandler {
 
     private final MessageSource messageSource;
 
-    @ExceptionHandler(EntityNotFoundException.class)
-    public ResponseEntity<ErrorMessage> entityNotFoundException(EntityNotFoundException ex,
+    @ExceptionHandler(ReciboCheckInNotFoundException.class)
+    public ResponseEntity<ErrorMessage> reciboCheckInNotFoundException(ReciboCheckInNotFoundException ex,
                                                                 HttpServletRequest request) {
 
-        Object[] params = new Object[]{ex.getRecurso(), ex.getCodigo()};
+        Object[] params = new Object[]{ex.getRecibo()};
 
-        String message = messageSource.getMessage("exception.entityNotFoundException", params, request.getLocale());
+        String message = messageSource.getMessage("exception.reciboCheckInNotFoundException", params, request.getLocale());
 
         return ResponseEntity
                 .status(HttpStatus.NOT_FOUND)
@@ -50,6 +50,20 @@ public class ApiExceptionHandler {
                 .contentType(MediaType.APPLICATION_JSON)
                 .body(new ErrorMessage(request,
                         HttpStatus.CONFLICT,
+                        message));
+    }
+
+    @ExceptionHandler(VagaDisponivelException.class)
+    public ResponseEntity<ErrorMessage> vagaDisponivelException(VagaDisponivelException ex,
+                                                                HttpServletRequest request) {
+
+        String message = messageSource.getMessage("exception.vagaDisponivelException", null, request.getLocale());
+
+        return ResponseEntity
+                .status(HttpStatus.NOT_FOUND)
+                .contentType(MediaType.APPLICATION_JSON)
+                .body(new ErrorMessage(request,
+                        HttpStatus.NOT_FOUND,
                         message));
     }
 
@@ -76,19 +90,6 @@ public class ApiExceptionHandler {
                 .contentType(MediaType.APPLICATION_JSON)
                 .body(new ErrorMessage(request,
                         HttpStatus.BAD_REQUEST,
-                        ex.getMessage()));
-    }
-
-    @ExceptionHandler(VagaDisponivelException.class)
-    public ResponseEntity<ErrorMessage> vagaDisponivelException(RuntimeException ex,
-                                                                        HttpServletRequest request) {
-
-        log.error("Api Error - ", ex);
-        return ResponseEntity
-                .status(HttpStatus.NOT_FOUND)
-                .contentType(MediaType.APPLICATION_JSON)
-                .body(new ErrorMessage(request,
-                        HttpStatus.NOT_FOUND,
                         ex.getMessage()));
     }
 
