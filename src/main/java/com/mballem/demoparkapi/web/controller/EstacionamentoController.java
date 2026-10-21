@@ -65,6 +65,10 @@ public class EstacionamentoController {
                                     schema = @Schema(implementation = ErrorMessage.class))),
                     @ApiResponse(responseCode = "403", description = "Recurso não permito ao perfil de CLIENTE",
                             content = @Content(mediaType = " application/json;charset=UTF-8",
+                                    schema = @Schema(implementation = ErrorMessage.class))),
+                    @ApiResponse(responseCode = "500",
+                            description = "Internal Server Error",
+                            content = @Content(mediaType = "application/json",
                                     schema = @Schema(implementation = ErrorMessage.class)))
             })
     @PostMapping("/check-in")
@@ -93,6 +97,10 @@ public class EstacionamentoController {
                                     schema = @Schema(implementation = EstacionamentoResponseDTO.class))),
                     @ApiResponse(responseCode = "404", description = "Número do recibo não encontrado.",
                             content = @Content(mediaType = " application/json;charset=UTF-8",
+                                    schema = @Schema(implementation = ErrorMessage.class))),
+                    @ApiResponse(responseCode = "500",
+                            description = "Internal Server Error",
+                            content = @Content(mediaType = "application/json",
                                     schema = @Schema(implementation = ErrorMessage.class)))
             })
     @GetMapping("/check-in/{recibo}")
@@ -119,6 +127,10 @@ public class EstacionamentoController {
                                     schema = @Schema(implementation = ErrorMessage.class))),
                     @ApiResponse(responseCode = "403", description = "Recurso não permito ao perfil de CLIENTE",
                             content = @Content(mediaType = " application/json;charset=UTF-8",
+                                    schema = @Schema(implementation = ErrorMessage.class))),
+                    @ApiResponse(responseCode = "500",
+                            description = "Internal Server Error",
+                            content = @Content(mediaType = "application/json",
                                     schema = @Schema(implementation = ErrorMessage.class)))
             })
     @PutMapping("/check-out/{recibo}")
@@ -153,6 +165,10 @@ public class EstacionamentoController {
                                     schema = @Schema(implementation = PageableDTO.class))),
                     @ApiResponse(responseCode = "403", description = "Recurso não permito ao perfil de CLIENTE",
                             content = @Content(mediaType = " application/json;charset=UTF-8",
+                                    schema = @Schema(implementation = ErrorMessage.class))),
+                    @ApiResponse(responseCode = "500",
+                            description = "Internal Server Error",
+                            content = @Content(mediaType = "application/json",
                                     schema = @Schema(implementation = ErrorMessage.class)))
             })
     @GetMapping("/cpf/{cpf}")
@@ -187,6 +203,10 @@ public class EstacionamentoController {
                                     schema = @Schema(implementation = EstacionamentoResponseDTO.class))),
                     @ApiResponse(responseCode = "403", description = "Recurso não permito ao perfil de ADMIN",
                             content = @Content(mediaType = " application/json;charset=UTF-8",
+                                    schema = @Schema(implementation = ErrorMessage.class))),
+                    @ApiResponse(responseCode = "500",
+                            description = "Internal Server Error",
+                            content = @Content(mediaType = "application/json",
                                     schema = @Schema(implementation = ErrorMessage.class)))
             })
     @GetMapping

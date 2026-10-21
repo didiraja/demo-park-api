@@ -67,7 +67,11 @@ public class ClienteController {
                         responseCode = "422",
                         description = "Recurso não permitido ao perfil de ADMIN",
                         content = @Content(mediaType = "application/json",
-                                schema = @Schema(implementation = ErrorMessage.class))),
+                schema = @Schema(implementation = ErrorMessage.class))),
+                    @ApiResponse(responseCode = "500",
+                            description = "Internal Server Error",
+                            content = @Content(mediaType = "application/json",
+                                    schema = @Schema(implementation = ErrorMessage.class)))
             })
     @PostMapping
     @PreAuthorize("hasRole('CLIENTE')")
@@ -99,6 +103,10 @@ public class ClienteController {
                             description = "Recurso não permitido ao perfil de CLIENTE",
                             content = @Content(mediaType = "application/json",
                                     schema = @Schema(implementation = ErrorMessage.class))),
+                    @ApiResponse(responseCode = "500",
+                            description = "Internal Server Error",
+                            content = @Content(mediaType = "application/json",
+                                    schema = @Schema(implementation = ErrorMessage.class)))
             })
     @GetMapping("/{id}")
     @PreAuthorize("hasRole('ADMIN')")
@@ -136,6 +144,10 @@ public class ClienteController {
                             description = "Recurso não permitido ao perfil de CLIENTE",
                             content = @Content(mediaType = "application/json;charset=UTF-8",
                                     schema = @Schema(implementation = ErrorMessage.class))),
+                    @ApiResponse(responseCode = "500",
+                            description = "Internal Server Error",
+                            content = @Content(mediaType = "application/json",
+                                    schema = @Schema(implementation = ErrorMessage.class)))
             })
     @GetMapping
     @PreAuthorize("hasRole('ADMIN')")
@@ -144,6 +156,23 @@ public class ClienteController {
         return ResponseEntity.ok(PageableMapper.toDTO(clientes));
     }
 
+    @Operation(summary = "Recuperar dados do cliente autenticado",
+            description = "Requisição exige uso de um bearer token. Acesso restrito a Role='CLIENTE'",
+            security = @SecurityRequirement(name = "security"),
+            responses = {
+                    @ApiResponse(responseCode = "200", description = "Recurso recuperado com sucesso",
+                            content = @Content(mediaType = " application/json;charset=UTF-8",
+                                    schema = @Schema(implementation = ClienteResponseDTO.class))
+                    ),
+                    @ApiResponse(responseCode = "403", description = "Recurso não permito ao perfil de ADMIN",
+                            content = @Content(mediaType = " application/json;charset=UTF-8",
+                                    schema = @Schema(implementation = ErrorMessage.class))
+                    ),
+                    @ApiResponse(responseCode = "500",
+                            description = "Internal Server Error",
+                            content = @Content(mediaType = "application/json",
+                                    schema = @Schema(implementation = ErrorMessage.class)))
+            })
     @GetMapping("/detalhes")
     @PreAuthorize("hasRole('CLIENTE')")
     public ResponseEntity<ClienteResponseDTO> getDetalhes(@AuthenticationPrincipal JwtUserDetails userDetails) {

@@ -48,7 +48,11 @@ public class AutenticacaoController {
                     @ApiResponse(responseCode = "422",
                             description = "Campo(s) Inválido(s)",
                             content = @Content(mediaType = "application/json",
-                            schema = @Schema(implementation = ErrorMessage.class)))
+                            schema = @Schema(implementation = ErrorMessage.class))),
+                    @ApiResponse(responseCode = "500",
+                            description = "Internal Server Error",
+                            content = @Content(mediaType = "application/json",
+                                    schema = @Schema(implementation = ErrorMessage.class)))
             })
     @PostMapping("/auth")
     public ResponseEntity<?> autenticar(@RequestBody @Valid UsuarioLoginDTO dto, HttpServletRequest request) {
