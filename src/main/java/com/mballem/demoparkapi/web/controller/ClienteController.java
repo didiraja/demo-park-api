@@ -2,12 +2,10 @@ package com.mballem.demoparkapi.web.controller;
 
 import com.mballem.demoparkapi.entity.Cliente;
 import com.mballem.demoparkapi.repository.projection.ClienteProjection;
+import com.mballem.demoparkapi.repository.projection.ClienteVagaProjection;
 import com.mballem.demoparkapi.service.ClienteService;
 import com.mballem.demoparkapi.service.UsuarioService;
-import com.mballem.demoparkapi.web.dto.ClienteCreateDTO;
-import com.mballem.demoparkapi.web.dto.ClienteResponseDTO;
-import com.mballem.demoparkapi.web.dto.PageableDTO;
-import com.mballem.demoparkapi.web.dto.UsuarioResponseDTO;
+import com.mballem.demoparkapi.web.dto.*;
 import com.mballem.demoparkapi.web.dto.mapper.ClienteMapper;
 import com.mballem.demoparkapi.jwt.JwtUserDetails;
 import com.mballem.demoparkapi.web.dto.mapper.PageableMapper;
@@ -138,7 +136,7 @@ public class ClienteController {
                             responseCode = "200",
                             description = "Recurso recuperado com sucesso",
                             content = @Content(mediaType = "application/json;charset=UTF-8",
-                                    schema = @Schema(implementation = ClienteResponseDTO.class))),
+                                    schema = @Schema(implementation = PageableClienteDTO.class))),
                     @ApiResponse(
                             responseCode = "403",
                             description = "Recurso não permitido ao perfil de CLIENTE",
@@ -151,7 +149,7 @@ public class ClienteController {
             })
     @GetMapping
     @PreAuthorize("hasRole('ADMIN')")
-    public ResponseEntity<PageableDTO> getAll(@Parameter(hidden = true) @PageableDefault(size = 5, sort = {"nome"}) Pageable pageable) {
+    public ResponseEntity<PageableDTO<ClienteProjection>> getAll(@Parameter(hidden = true) @PageableDefault(size = 5, sort = {"nome"}) Pageable pageable) {
         Page<ClienteProjection> clientes = clienteService.buscarTodos(pageable);
         return ResponseEntity.ok(PageableMapper.toDTO(clientes));
     }

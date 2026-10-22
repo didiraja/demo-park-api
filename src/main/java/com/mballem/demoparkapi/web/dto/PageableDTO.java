@@ -9,9 +9,9 @@ import java.util.List;
 
 @Getter
 @Setter
-public class PageableDTO {
+public class PageableDTO<T> {
 
-    private List content = new ArrayList<>();
+    private List<?> content = new ArrayList<>();
 
     private boolean first;
 

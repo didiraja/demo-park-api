@@ -3,11 +3,14 @@ package com.mballem.demoparkapi.service;
 import com.mballem.demoparkapi.entity.ClienteVaga;
 import com.mballem.demoparkapi.exception.EntityNotFoundException;
 import com.mballem.demoparkapi.exception.ReciboCheckInNotFoundException;
+import com.mballem.demoparkapi.jwt.JwtUserDetails;
 import com.mballem.demoparkapi.repository.ClienteVagaRepository;
 import com.mballem.demoparkapi.repository.projection.ClienteVagaProjection;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
+import org.springframework.security.access.AccessDeniedException;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -24,9 +27,21 @@ public class ClienteVagaService {
 
     @Transactional(readOnly = true)
     public ClienteVaga buscarPorRecibo(String recibo) {
-        return repository.findByReciboAndDataSaidaIsNull(recibo).orElseThrow(
+        ClienteVaga cv =  repository.findByReciboAndDataSaidaIsNull(recibo).orElseThrow(
                 () -> new ReciboCheckInNotFoundException(recibo)
         );
+
+        JwtUserDetails jwtUserDetails = (JwtUserDetails) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+
+        boolean isAdmin = jwtUserDetails.getRole().equals("ROLE_ADMIN");
+
+        boolean isClienteDonoRecibo = cv.getCliente().getUsuario().getUsername().equals(jwtUserDetails.getUsername());
+
+        if (!isAdmin && !isClienteDonoRecibo) {
+            throw new AccessDeniedException("Acesso negado, este recibo não pertence a você");
+        }
+
+        return cv;
     }
 
     @Transactional(readOnly = true)

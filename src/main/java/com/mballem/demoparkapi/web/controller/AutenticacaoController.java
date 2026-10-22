@@ -40,7 +40,7 @@ public class AutenticacaoController {
                     @ApiResponse(responseCode = "200",
                             description = "Autenticação realizada com sucesso e retornor de um bearer token",
                             content = @Content(mediaType = "application/json",
-                            schema = @Schema(implementation = UsuarioResponseDTO.class))),
+                            schema = @Schema(implementation = JwtToken.class))),
                     @ApiResponse(responseCode = "400",
                             description = "Credenciais inválidas",
                             content = @Content(mediaType = "application/json",

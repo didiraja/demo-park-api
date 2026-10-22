@@ -7,6 +7,7 @@ import com.mballem.demoparkapi.service.ClienteVagaService;
 import com.mballem.demoparkapi.service.EstacionamentoService;
 import com.mballem.demoparkapi.web.dto.EstacionamentoCreateDTO;
 import com.mballem.demoparkapi.web.dto.EstacionamentoResponseDTO;
+import com.mballem.demoparkapi.web.dto.PageableClienteVagaDTO;
 import com.mballem.demoparkapi.web.dto.PageableDTO;
 import com.mballem.demoparkapi.web.dto.mapper.ClienteVagaMapper;
 import com.mballem.demoparkapi.web.dto.mapper.PageableMapper;
@@ -21,6 +22,8 @@ import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.security.SecurityRequirement;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
+import jakarta.validation.constraints.NotBlank;
+import jakarta.validation.constraints.Pattern;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -162,7 +165,7 @@ public class EstacionamentoController {
             responses = {
                     @ApiResponse(responseCode = "200", description = "Recurso localizado com sucesso",
                             content = @Content(mediaType = " application/json;charset=UTF-8",
-                                    schema = @Schema(implementation = PageableDTO.class))),
+                                    schema = @Schema(implementation = PageableClienteVagaDTO.class))),
                     @ApiResponse(responseCode = "403", description = "Recurso não permito ao perfil de CLIENTE",
                             content = @Content(mediaType = " application/json;charset=UTF-8",
                                     schema = @Schema(implementation = ErrorMessage.class))),
@@ -173,10 +176,15 @@ public class EstacionamentoController {
             })
     @GetMapping("/cpf/{cpf}")
     @PreAuthorize("hasAnyRole('ADMIN')")
-    public ResponseEntity<PageableDTO> getAllEstacionamentosPorCpf(
-            @PathVariable String cpf, @PageableDefault(size= 5, sort = "dataEntrada", direction = Sort.Direction.ASC) Pageable pageable) {
+    public ResponseEntity<PageableDTO<ClienteVagaProjection>> getAllEstacionamentosPorCpf(
+            @PathVariable
+            @Pattern(regexp = "^\\d{11}$", message = "Formato de CPF incorreto")
+            @NotBlank(message = "Número de CPF não informado")
+            String cpf,
+            @Parameter(hidden = true)
+            @PageableDefault(size= 5, sort = "dataEntrada", direction = Sort.Direction.ASC) Pageable pageable) {
         Page<ClienteVagaProjection> projection = clienteVagaService.buscarTodosPorClienteCpf(cpf, pageable);
-        PageableDTO dto = PageableMapper.toDTO(projection);
+        PageableDTO<ClienteVagaProjection> dto = PageableMapper.toDTO(projection);
         return ResponseEntity.ok(dto);
     }
 
@@ -200,7 +208,7 @@ public class EstacionamentoController {
             responses = {
                     @ApiResponse(responseCode = "200", description = "Recurso localizado com sucesso",
                             content = @Content(mediaType = " application/json;charset=UTF-8",
-                                    schema = @Schema(implementation = EstacionamentoResponseDTO.class))),
+                                    schema = @Schema(implementation = PageableClienteVagaDTO.class))),
                     @ApiResponse(responseCode = "403", description = "Recurso não permito ao perfil de ADMIN",
                             content = @Content(mediaType = " application/json;charset=UTF-8",
                                     schema = @Schema(implementation = ErrorMessage.class))),
@@ -211,10 +219,10 @@ public class EstacionamentoController {
             })
     @GetMapping
     @PreAuthorize("hasAnyRole('CLIENTE')")
-    public ResponseEntity<PageableDTO> getAllEstacionamentosDoCliente(
+    public ResponseEntity<PageableDTO<ClienteVagaProjection>> getAllEstacionamentosDoCliente(
             @AuthenticationPrincipal JwtUserDetails user, @PageableDefault(size= 5, sort = "dataEntrada", direction = Sort.Direction.ASC) Pageable pageable) {
         Page<ClienteVagaProjection> projection = clienteVagaService.buscarTodosPorUsuarioId(user.getId(), pageable);
-        PageableDTO dto = PageableMapper.toDTO(projection);
+        PageableDTO<ClienteVagaProjection> dto = PageableMapper.toDTO(projection);
         return ResponseEntity.ok(dto);
     }
 }
